@@ -1,5 +1,6 @@
 package com.example.demo;
 
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -34,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class SlotManagementService {
@@ -210,6 +212,20 @@ public class SlotManagementService {
 		return slots.get(0);
 	}
 
+	public String removeSlots(List<String> slotIdList) {
+	    if (slotIdList.isEmpty()) {
+	        return "No slots to delete";
+	    }
+
+	    // Create a comma-separated list of slot IDs
+	    String slotIds = String.join(",", slotIdList);
+
+	    String query = "DELETE FROM `springbootdb`.`slots` WHERE id IN (" + slotIds + ");";
+
+	    jdbc.execute(query);
+
+	    return "Slot entries " + slotIdList + " deleted successfully";
+	}
 
 
 }

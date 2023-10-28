@@ -1,5 +1,6 @@
 package com.example.demo;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,6 +47,16 @@ public class SlotManagementController {
 				slotModel.getSlot_duration(), slotModel.getIt_email_list(), slotModel.getAttendee_email_list(),
 				slotModel.getRegion(), slotModel.isIs_booked(), slotModel.getTime_zone(),
 				slotModel.isInclude_weekends(), slotModel.getHolidays(), slotModel.getCreate_event());
+		return report;
+
+	}
+	
+	@RequestMapping(value = "/deleteslots", method = RequestMethod.POST)
+	@ResponseBody
+	public String deleteSlots(@RequestBody List<String> slotIdList)
+				throws ParseException, IOException, GeneralSecurityException {
+		
+		String report = slotManagementService.removeSlots(slotIdList);
 		return report;
 
 	}
