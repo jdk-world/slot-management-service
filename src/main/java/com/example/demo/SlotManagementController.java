@@ -1,6 +1,7 @@
 package com.example.demo;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,11 +30,19 @@ public class SlotManagementController {
 	@RequestMapping(value = "/insertslot", method = RequestMethod.POST)
 	@ResponseBody
 	public String insertslot(@RequestBody SlotModel slotModel)
-				throws ParseException, IOException, GeneralSecurityException {
-		
+			throws ParseException, IOException, GeneralSecurityException {
+
+		String tmp_region = slotModel.getRegion();
+		String tmp_zone = slotModel.getTime_zone();
+
+		if (StringUtils.isNotEmpty(tmp_region) && StringUtils.equalsAnyIgnoreCase(tmp_region, "ALL")) {
+			tmp_region = "Asia";
+			tmp_zone = tmp_region+"/Kolkata";
+		}
+
 		String report = slotManagementService.insertslot(slotModel.getSlot_start(), slotModel.getSlot_end(),
-				slotModel.getIt_email_list(), slotModel.getAttendee_email_list(), slotModel.getRegion(),
-				slotModel.isIs_booked(), slotModel.getTime_zone());
+				slotModel.getIt_email_list(), slotModel.getAttendee_email_list(), tmp_region, slotModel.isIs_booked(),
+				tmp_zone);
 		return report;
 
 	}
@@ -43,9 +52,18 @@ public class SlotManagementController {
 	public String insertslots(@RequestBody SlotModel slotModel)
 				throws ParseException, IOException, GeneralSecurityException {
 		
+		String tmp_region = slotModel.getRegion();
+		String tmp_zone = slotModel.getTime_zone();
+
+		if (StringUtils.isNotEmpty(tmp_region) && StringUtils.equalsAnyIgnoreCase(tmp_region, "ALL")) {
+			tmp_region = "Asia";
+			tmp_zone = tmp_region+"/Kolkata";
+		}
+
+		
 		String report = slotManagementService.insertslots(slotModel.getSlot_start(), slotModel.getSlots_end(),
 				slotModel.getSlot_duration(), slotModel.getIt_email_list(), slotModel.getAttendee_email_list(),
-				slotModel.getRegion(), slotModel.isIs_booked(), slotModel.getTime_zone(),
+				tmp_region, slotModel.isIs_booked(), tmp_zone,
 				slotModel.isInclude_weekends(), slotModel.getHolidays(), slotModel.getCreate_event());
 		return report;
 
