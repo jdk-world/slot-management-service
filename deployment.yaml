@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
       - name: slot-management-service-ver1
-        image: docker.io/saurabh2204/slot-management-service:latest
+        image: gcr.io/dulcet-listener-317509/slot-management-service:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8895
