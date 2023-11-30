@@ -46,9 +46,4 @@ spec:
         image: gcr.io/dulcet-listener-317509/slot-management-service:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 8895
-        resources:
-          limits:
-            cpu: 500m
-          requests:
-            cpu: 200m        
+        - containerPort: 8890
