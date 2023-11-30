@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import com.google.api.services.calendar.CalendarScopes;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -37,8 +41,18 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.sql.DataSource;
+
 @Service
 public class SlotManagementService {
+    private final SimpleJdbcInsert simpleJdbcInsert;
+    public SlotManagementService(DataSource dataSource) {
+        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
+                .withTableName("slots")
+                .usingGeneratedKeyColumns("id"); // Assuming "id" is the generated key column
+    }
+    
+    
 	@Autowired
 	JdbcTemplate jdbc;
 
@@ -72,10 +86,8 @@ public class SlotManagementService {
 	String[] slot_start_date_time = null, slot_end_date_time = null;
 
 	
-	public String insertslot(String slot_start, String slot_end, String it_email_list, String attendee_email_list,
+/**	public String insertslot(String slot_start, String slot_end, String it_email_list, String attendee_email_list,
 			String region, boolean is_booked, String time_zone) throws ParseException {
-
-		String query1 = "insert into slots(slot_start,slot_end, time_zone, it_email_list,attendee_email_list,region,is_booked) values('2022-08-09 07:30:30','2022-08-09 08:30:30', 'EST','saurabh.gupta1@hcl.com','saurabh22045@gmail.com', 'Spain', 0)";
 
 		String query2 = "insert into slots(slot_start,slot_end, time_zone, it_email_list,attendee_email_list,region,is_booked) values('"
 				+ slot_start + "','" + slot_end + "', '" + time_zone + "','" + it_email_list + "','"
@@ -84,7 +96,21 @@ public class SlotManagementService {
 		jdbc.execute(query2);
 		return "slot created Successfully";
 	}
+*/
+	
+	public String insertslot(String slot_start, String slot_end, String it_email_list, String attendee_email_list,
+			String region, boolean is_booked, String time_zone) throws ParseException {
 
+		SqlParameterSource parameters = new MapSqlParameterSource().addValue("slot_start", slot_start)
+				.addValue("slot_end", slot_end).addValue("time_zone", time_zone)
+				.addValue("it_email_list", it_email_list).addValue("attendee_email_list", attendee_email_list)
+				.addValue("region", region).addValue("is_booked", BooleanUtils.toInteger(is_booked));
+
+		Number generatedId = simpleJdbcInsert.executeAndReturnKey(parameters);
+		return "slot created Successfully, Id -" + generatedId.longValue();
+
+	}
+	
 	public String insertslots(String slot_start, String slots_end, String slot_duration, String it_email_list,
 			String attendee_email_list, String region, boolean is_booked, String time_zone, boolean include_weekends,
 			String holidays, String create_event) throws ParseException, IOException, GeneralSecurityException {
