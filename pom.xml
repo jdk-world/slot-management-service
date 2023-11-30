@@ -218,12 +218,6 @@
     <version>v3-rev20211026-1.32.1</version>
 </dependency>
 
-
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>compliance-reporting-service</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 
 	<build>
